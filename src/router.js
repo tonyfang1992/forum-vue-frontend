@@ -38,6 +38,10 @@ export default new Router({
       path: '/restaurants/top',
       name: 'restaurants-tops',
       component: () => import('./views/RestaurantsTop.vue')
+    }, {
+      path: '/restaurants/:id/dashboard',
+      name: 'dashboard',
+      component: () => import('./views/dashboard.vue')
     },
     {
       path: '/restaurants/:id',
