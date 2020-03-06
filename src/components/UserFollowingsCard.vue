@@ -1,0 +1,27 @@
+<template>
+  <div class="card">
+    <div class="card-header">
+      <strong>{{profile.Followings.length}}</strong> followings (追蹤者)
+    </div>
+    <div class="card-body">
+      <router-link
+        v-for="Following in profile.Followings"
+        :key="Following.id"
+        :to="{name:'user', params:{id:Following.id}}"
+      >
+        <img :src="Following.image" width="60" height="60" class="avatar mr-1" />
+      </router-link>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    profile: {
+      type: Array,
+      require: true
+    }
+  }
+};
+</script>
