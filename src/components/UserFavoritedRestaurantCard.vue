@@ -9,7 +9,7 @@
         :key="favoritedRestaurant.id"
         :to="{name:'restaurant',params:{id:favoritedRestaurant.id}}"
       >
-        <img :src="favoritedRestaurant.image" width="60" height="60" class="avatar" />
+        <img :src="favoritedRestaurant.image" width="60" height="60" class="avatar mr-1" />
       </router-link>
     </div>
   </div>

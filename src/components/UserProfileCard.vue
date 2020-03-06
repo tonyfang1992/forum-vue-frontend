@@ -37,7 +37,7 @@
 export default {
   props: {
     profile: {
-      type: Array,
+      type: Object,
       require: true
     }
   }

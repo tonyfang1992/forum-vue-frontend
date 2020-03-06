@@ -9,7 +9,7 @@
         :key="comment.id"
         :to="{name:'restaurant', params:{id: comment.Restaurant.id}}"
       >
-        <img :src="comment.Restaurant.image" width="60" height="60" class="avatar" />
+        <img :src="comment.Restaurant.image" width="60" height="60" class="avatar mr-1" />
       </router-link>
     </div>
   </div>
@@ -19,7 +19,7 @@
 export default {
   props: {
     profile: {
-      type: Array,
+      type: Object,
       require: true
     }
   }
