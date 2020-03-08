@@ -23,9 +23,9 @@
             </li>
           </ul>
           <p>
-            <a href="/users/1/edit">
+            <router-link :to="{name:'useredit',params:{id:profile.id}}">
               <button type="submit" class="btn btn-primary">edit</button>
-            </a>
+            </router-link>
           </p>
         </div>
       </div>
