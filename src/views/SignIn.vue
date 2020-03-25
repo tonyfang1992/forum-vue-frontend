@@ -46,8 +46,10 @@
 </template>
 
 <script>
+/*eslint-disable*/
 import authorizationAPI from "./../apis/authorization";
 import { Toast } from "./../utils/helpers";
+
 export default {
   name: "SignIn",
   data() {
@@ -57,9 +59,10 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
+    handleSubmit(e) {
       // 如果 email 或 password 為空，則使用 Toast 提示
       // 然後 return 不繼續往後執行
+
       if (!this.email || !this.password) {
         Toast.fire({
           type: "warning",
@@ -85,7 +88,6 @@ export default {
         .catch(error => {
           // 將密碼欄位清空
           this.password = "";
-
           // 顯示錯誤提示
           Toast.fire({
             type: "warning",
