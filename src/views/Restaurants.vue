@@ -295,7 +295,7 @@ const dummyData = {
       updatedAt: "2020-02-28T14:38:32.000Z"
     }
   ],
-  categoryId: "",
+  categoryId: 0,
   page: 1,
   totalPage: [1, 2, 3, 4, 5, 6],
   prev: 1,
