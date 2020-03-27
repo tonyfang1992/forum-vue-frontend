@@ -14,8 +14,6 @@
           type="email"
           class="form-control"
           placeholder="email"
-          required
-          autofocus
         />
       </div>
 
@@ -28,11 +26,14 @@
           type="password"
           class="form-control"
           placeholder="Password"
-          required
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+        :disabled="isProcessing"
+      >Submit</button>
 
       <div class="text-center mb-3">
         <p>
@@ -55,46 +56,46 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      isProcessing: false
     };
   },
   methods: {
-    handleSubmit(e) {
+    async handleSubmit(e) {
       // 如果 email 或 password 為空，則使用 Toast 提示
       // 然後 return 不繼續往後執行
+      try {
+        if (!this.email || !this.password) {
+          Toast.fire({
+            icon: "warning",
+            title: "請填入 email 和 password"
+          });
+          return;
+        }
+        this.isProcessing = true;
 
-      if (!this.email || !this.password) {
-        Toast.fire({
-          type: "warning",
-          title: "請填入 email 和 password"
-        });
-        return;
-      }
-      authorizationAPI
-        .signIn({
+        const response = await authorizationAPI.signIn({
           email: this.email,
           password: this.password
-        })
-        .then(response => {
-          console.log("response", response);
-          // 取得 API 請求後的資料
-          const { data } = response;
-          // 將 token 存放在 localStorage 內
-          localStorage.setItem("token", data.token);
-
-          // 成功登入後轉址到餐聽首頁
-          this.$router.push("/restaurants");
-        })
-        .catch(error => {
-          // 將密碼欄位清空
-          this.password = "";
-          // 顯示錯誤提示
-          Toast.fire({
-            type: "warning",
-            title: "請確認您輸入的帳號密碼錯誤"
-          });
-          console.log("error", error);
         });
+        const { data, statusText } = response;
+
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        // 將 token 存放在 localStorage 內
+        localStorage.setItem("token", data.token);
+        // 成功登入後轉址到餐聽首頁
+        this.$router.push("/restaurants");
+      } catch (error) {
+        this.password = "";
+        this.isProcessing = false;
+
+        Toast.fire({
+          type: "warning",
+          title: "請確認您輸入的帳號密碼錯誤"
+        });
+      }
     }
   }
 };
