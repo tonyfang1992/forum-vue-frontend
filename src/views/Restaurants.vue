@@ -77,7 +77,7 @@ export default {
         this.totalPage = data.totalPage.length;
       } catch (error) {
         Toast.fire({
-          type: "error",
+          icon: "error",
           title: "無法取得餐廳資料，請稍後再試"
         });
       }
