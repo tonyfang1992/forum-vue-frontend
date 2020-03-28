@@ -120,12 +120,12 @@ export default {
         address: "",
         description: "",
         image: "",
-        openingHours: "",
-        isProcessing: {
-          type: Boolean,
-          default: false
-        }
+        openingHours: ""
       })
+    },
+    isProcessing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
