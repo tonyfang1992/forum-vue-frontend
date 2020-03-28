@@ -134,6 +134,8 @@ export default {
         const { data, statusText } = await usersAPI.deleteLike({
           restaurantId
         });
+        console.log(data);
+        console.log(statusText);
         if (statusText !== "OK" || data.status !== "success") {
           throw new Error(statusText);
         }
