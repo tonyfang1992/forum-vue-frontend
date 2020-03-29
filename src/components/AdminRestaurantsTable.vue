@@ -50,7 +50,10 @@ export default {
   methods: {
     async fetchRestaurantsAdmin() {
       try {
-        const { data, statusText } = await restaurantAdminAPI.getRestaurants();
+        const {
+          data,
+          statusText
+        } = await restaurantAdminAPI.restaurants.getRestaurants();
         if (statusText !== "OK") {
           throw new Error(statusText);
         }
@@ -65,7 +68,10 @@ export default {
     },
     async deleteRestaurant(restaurantId) {
       try {
-        const { data, statusText } = await restaurantAdminAPI.deleteRestaurant({
+        const {
+          data,
+          statusText
+        } = await restaurantAdminAPI.restaurants.deleteRestaurant({
           restaurantId
         });
         if (data.status !== "success") {
