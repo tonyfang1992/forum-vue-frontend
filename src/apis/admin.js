@@ -7,6 +7,11 @@ export default {
       return apiHelper.get('/admin/categories', {
         headers: { Authorization: `Bearer ${getToken()}` }
       })
+    },
+    create(data) {
+      return apiHelper.post('/admin/categories', data, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      })
     }
   },
   restaurants: {

@@ -9,7 +9,12 @@
           <input v-model="newCategoryName" type="text" class="form-control" placeholder="新增餐廳類別..." />
         </div>
         <div class="col-auto">
-          <button type="button" class="btn btn-primary" @click.stop.prevent="createCategory">新增</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click.stop.prevent="createCategory"
+            :disabled="isProcessing"
+          >新增</button>
         </div>
       </div>
     </form>
@@ -63,7 +68,7 @@
 import AdminNav from "@/components/AdminNav";
 import adminCategoryAPI from "../apis/admin";
 import { Toast } from "../utils/helpers";
-import uuid from "uuid/v4";
+// import uuid from "uuid/v4";
 
 export default {
   components: {
@@ -72,7 +77,8 @@ export default {
   data() {
     return {
       newCategoryName: "",
-      categories: []
+      categories: [],
+      isProcessing: false
     };
   },
   created() {
@@ -97,16 +103,35 @@ export default {
         });
       }
     },
-    createCategory() {
-      // TODO: 透過 API 告知伺服器欲新增的餐廳類別...
-
-      // 將新的類別添加到陣列中
-      this.categories.push({
-        id: uuid(),
-        name: this.newCategoryName
-      });
-
-      this.newCategoryName = ""; // 清空原本欄位中的內容
+    async createCategory() {
+      try {
+        this.isProcessing = true;
+        if (!this.newCategoryName) {
+          Toast.fire({
+            icon: "error",
+            title: "新餐廳類別不得為空"
+          });
+        }
+        const name = this.newCategoryName;
+        const { data, statusText } = await adminCategoryAPI.categories.create({
+          name
+        });
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        Toast.fire({
+          icon: "success",
+          title: "類別新增成功"
+        });
+        this.newCategoryName = "";
+        this.isProcessing = false;
+      } catch (error) {
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "現在無法新增餐廳類別，請稍後再試"
+        });
+      }
     },
     deleteCategory(categoryId) {
       // TODO: 透過 API 告知伺服器欲刪除的餐廳類別
