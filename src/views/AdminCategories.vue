@@ -133,7 +133,20 @@ export default {
         });
       }
     },
-    deleteCategory(categoryId) {
+    async deleteCategory(categoryId) {
+      try {
+        const { data, statusText } = await adminCategoryAPI.categories.delete({
+          categoryId
+        });
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "現在無法刪除分類"
+        });
+      }
       // TODO: 透過 API 告知伺服器欲刪除的餐廳類別
 
       // 將該餐廳類別從陣列中移除
@@ -152,9 +165,23 @@ export default {
         };
       });
     },
-    updateCategory({ categoryId }) {
-      // TODO: 透過 API 去向伺服器更新餐廳類別名稱
-      this.toggleIsEditing(categoryId);
+    async updateCategory({ categoryId, name }) {
+      try {
+        const { data, statusText } = await adminCategoryAPI.categories.update({
+          categoryId,
+          name
+        });
+
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        this.toggleIsEditing(categoryId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "修改類別名稱失敗，請稍後再試"
+        });
+      }
     },
     handleCancel(categoryId) {
       this.categories = this.categories.map(category => {
