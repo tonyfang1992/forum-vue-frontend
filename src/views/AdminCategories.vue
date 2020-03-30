@@ -61,60 +61,41 @@
 
 <script>
 import AdminNav from "@/components/AdminNav";
+import adminCategoryAPI from "../apis/admin";
+import { Toast } from "../utils/helpers";
 import uuid from "uuid/v4";
-//  2. 定義暫時使用的資料
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z"
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z"
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z"
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z"
-    }
-  ]
-};
 
 export default {
   components: {
     AdminNav
   },
-  // 3. 定義 Vue 中使用的 data 資料
   data() {
     return {
       newCategoryName: "",
       categories: []
     };
   },
-  // 5. 調用 `fetchCategories` 方法
   created() {
     this.fetchCategories();
   },
   methods: {
-    // 4. 定義 `fetchCategories` 方法，把 `dummyData` 帶入 Vue 物件
-    fetchCategories() {
-      // 在每一個 category 中都添加一個 isEditing 屬性
-      this.categories = dummyData.categories.map(category => ({
-        ...category,
-        isEditing: false
-      }));
+    async fetchCategories() {
+      try {
+        const { data, statusText } = await adminCategoryAPI.categories.get();
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        // 在每一個 category 中都添加一個 isEditing 屬性
+        this.categories = data.categories.map(category => ({
+          ...category,
+          isEditing: false
+        }));
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "現在無法取得餐廳分類，請稍後再試"
+        });
+      }
     },
     createCategory() {
       // TODO: 透過 API 告知伺服器欲新增的餐廳類別...
