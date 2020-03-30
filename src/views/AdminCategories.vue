@@ -119,6 +119,11 @@ export default {
         if (statusText !== "OK" || data.status !== "success") {
           throw new Error(statusText);
         }
+        this.categories.push({
+          id: data.categoryId,
+          name: this.newCategoryName,
+          isEditing: false
+        });
         Toast.fire({
           icon: "success",
           title: "類別新增成功"
@@ -141,18 +146,16 @@ export default {
         if (statusText !== "OK" || data.status !== "success") {
           throw new Error(statusText);
         }
+        // 將該餐廳類別從陣列中移除
+        this.categories = this.categories.filter(
+          category => category.id !== categoryId
+        );
       } catch (error) {
         Toast.fire({
           icon: "error",
           title: "現在無法刪除分類"
         });
       }
-      // TODO: 透過 API 告知伺服器欲刪除的餐廳類別
-
-      // 將該餐廳類別從陣列中移除
-      this.categories = this.categories.filter(
-        category => category.id !== categoryId
-      );
     },
     toggleIsEditing(categoryId) {
       this.categories = this.categories.map(category => {
