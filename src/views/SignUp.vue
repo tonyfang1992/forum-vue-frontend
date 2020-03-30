@@ -124,7 +124,7 @@ export default {
       } catch (error) {
         this.isProcessing = false;
         Toast.fire({
-          type: "error",
+          icon: "error",
           title: "現在無法註冊使用者，請稍後再試"
         });
       }

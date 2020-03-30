@@ -37,7 +37,7 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  signUp({ data }) {
+  signUp(data) {
     return apiHelper.post('/signup', { ...data })
   }
 
