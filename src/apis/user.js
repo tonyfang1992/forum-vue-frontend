@@ -36,6 +36,9 @@ export default {
     return apiHelper.delete(`/following/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
+  },
+  signUp({ data }) {
+    return apiHelper.post('/signup', { ...data })
   }
 
 }

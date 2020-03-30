@@ -15,7 +15,6 @@
           class="form-control"
           placeholder="name"
           required
-          autofocus
         />
       </div>
 
@@ -58,7 +57,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+        :disabled="isProcessing"
+      >{{ isProcessing ? "處理中..." : "Submit" }}</button>
 
       <div class="text-center mb-3">
         <p>
@@ -72,25 +75,59 @@
 </template>
 
 <script>
+import userAPI from "../apis/user";
+import { Toast } from "./../utils/helpers";
 export default {
-  name: "SugnUp",
-  data: function() {
+  data() {
     return {
       name: "",
       email: "",
       password: "",
-      passwordCheck: ""
+      passwordCheck: "",
+      isProcessing: false
     };
   },
   methods: {
-    handleSubmit() {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck
-      });
-      console.log("data", data);
+    async handleSubmit() {
+      try {
+        if (
+          !this.name ||
+          !this.email ||
+          !this.password ||
+          !this.passwordCheck
+        ) {
+          Toast.fire({
+            icon: "error",
+            title: "所有欄位都是必填"
+          });
+          return;
+        }
+        if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: "error",
+            title: "密碼確認失敗，請輸入一致的密碼"
+          });
+          return;
+        }
+        this.isProcessing = true;
+        const { data, statusText } = await userAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck
+        });
+
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        this.$router.push("/signin");
+      } catch (error) {
+        this.isProcessing = false;
+        Toast.fire({
+          type: "error",
+          title: "現在無法註冊使用者，請稍後再試"
+        });
+      }
     }
   }
 };
