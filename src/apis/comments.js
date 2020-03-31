@@ -13,4 +13,9 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  delete(id) {
+    return apiHelper.delete(`/comments/${id}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  }
 }

@@ -93,11 +93,26 @@ export default {
         });
       }
     },
-    afterDeleteComment(commentId) {
-      // 以 filter 保留未被選擇的 comment.id
-      this.restaurantComments = this.restaurantComments.filter(
-        comment => comment.id !== commentId
-      );
+    async afterDeleteComment(commentId) {
+      try {
+        const { data, statusText } = await commentAPI.delete(commentId);
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        Toast.fire({
+          icon: "success",
+          title: data.message
+        });
+        // 以 filter 保留未被選擇的 comment.id
+        this.restaurantComments = this.restaurantComments.filter(
+          comment => comment.id !== commentId
+        );
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "現在無法刪除評論，請稍後再試"
+        });
+      }
     },
     async afterCreateComment(payload) {
       try {
