@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import uuid from "uuid/v4";
 export default {
   props: {
     restaurantId: {
@@ -29,7 +28,6 @@ export default {
       // TODO: 向 API 發送 POST 請求
       // 伺服器新增 Comment 成功後...
       this.$emit("after-create-comment", {
-        commentId: uuid(), // 尚未串接 API 暫時使用隨機的 id
         restaurantId: this.restaurantId,
         text: this.text
       });

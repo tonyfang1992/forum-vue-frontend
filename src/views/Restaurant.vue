@@ -18,120 +18,10 @@
 import RestaurantDetail from "./../components/RestaurantDetail";
 import RestaurantComments from "./../components/RestaurantComments";
 import CreateComment from "./../components/CreateComment";
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true
-  },
-  isAuthenticated: true
-};
-const dummyData = {
-  restaurant: {
-    id: 1,
-    name: "Dr. Izaiah Ernser",
-    tel: "389.061.3241 x162",
-    address: "7226 Johns Islands",
-    opening_hours: "08:00",
-    description: "quam",
-    image:
-      "https://loremflickr.com/320/240/restaurant,food/?random=90.45122643685453",
-    viewCounts: 39,
-    createdAt: "2020-02-28T14:38:32.000Z",
-    updatedAt: "2020-03-01T11:02:24.456Z",
-    CategoryId: 2,
-    Category: {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    FavoritedUsers: [],
-    LikedUsers: [
-      {
-        id: 1,
-        name: "root",
-        email: "root@example.com",
-        password:
-          "$2a$10$J9pLpJJ1Tzfe/ZcjdYwXdumyh.3F5E.w/HTxRcH./cl3azhgekgQe",
-        isAdmin: true,
-        image: null,
-        createdAt: "2020-02-28T14:38:32.000Z",
-        updatedAt: "2020-02-28T14:38:32.000Z",
-        Like: {
-          UserId: 1,
-          RestaurantId: 1,
-          createdAt: "2020-02-29T16:54:53.000Z",
-          updatedAt: "2020-02-29T16:54:53.000Z"
-        }
-      }
-    ],
-    Comments: [
-      {
-        id: 1,
-        text:
-          "Dolores dolorem maxime debitis blanditiis quam sed voluptatem mollitia.",
-        UserId: 3,
-        RestaurantId: 1,
-        createdAt: "2020-02-28T14:38:32.000Z",
-        updatedAt: "2020-02-28T14:38:32.000Z",
-        User: {
-          id: 3,
-          name: "user2",
-          email: "user2@example.com",
-          password:
-            "$2a$10$VHKmtPqbcUzK46qxLllqj.w506U2N2TObMmnpdlNG2CLZPa1xzuTi",
-          isAdmin: false,
-          image: null,
-          createdAt: "2020-02-28T14:38:32.000Z",
-          updatedAt: "2020-02-28T14:38:32.000Z"
-        }
-      },
-      {
-        id: 51,
-        text: "Nobis aspernatur nobis cumque sed nemo et autem.",
-        UserId: 2,
-        RestaurantId: 1,
-        createdAt: "2020-02-28T14:38:32.000Z",
-        updatedAt: "2020-02-28T14:38:32.000Z",
-        User: {
-          id: 2,
-          name: "user1",
-          email: "user1@example.com",
-          password:
-            "$2a$10$NyaAtgRuHx3i7hHlnb5IXOC4Uk4.q1J1iQs3op.ymdCEh7.tOwcH2",
-          isAdmin: false,
-          image: null,
-          createdAt: "2020-02-28T14:38:32.000Z",
-          updatedAt: "2020-02-28T14:38:32.000Z"
-        }
-      },
-      {
-        id: 3222,
-        text: "test",
-        UserId: 1,
-        RestaurantId: 1,
-        createdAt: "2020-03-01T10:54:40.000Z",
-        updatedAt: "2020-03-01T10:54:40.000Z",
-        User: {
-          id: 1,
-          name: "root",
-          email: "root@example.com",
-          password:
-            "$2a$10$J9pLpJJ1Tzfe/ZcjdYwXdumyh.3F5E.w/HTxRcH./cl3azhgekgQe",
-          isAdmin: true,
-          image: null,
-          createdAt: "2020-02-28T14:38:32.000Z",
-          updatedAt: "2020-02-28T14:38:32.000Z"
-        }
-      }
-    ]
-  },
-  isFavorited: false,
-  isLiked: true
-};
+import restaurantsAPI from "./../apis/restaurants";
+import { Toast } from "./../utils/helpers";
+import { mapState } from "vuex";
+import commentAPI from "./../apis/comments";
 
 export default {
   components: {
@@ -153,32 +43,55 @@ export default {
         isFavorited: false,
         isLiked: false
       },
-      currentUser: dummyUser.currentUser,
       restaurantComments: []
     };
+  },
+  computed: {
+    ...mapState(["currentUser"])
   },
   created() {
     const { id: restaurantId } = this.$route.params;
     this.fetchRestaurant(restaurantId);
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id: restaurantId } = to.params;
+    this.fetchRestaurant(restaurantId);
+    next();
+  },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log("fetchRestaurant id: ", restaurantId);
+    async fetchRestaurant(restaurantId) {
+      try {
+        // STEP 3: 透過 restaurantsAPI 取得餐廳資訊
+        const { data, statusText } = await restaurantsAPI.getRestaurant({
+          restaurantId
+        });
 
-      this.restaurant = {
-        id: dummyData.restaurant.id,
-        name: dummyData.restaurant.name,
-        categoryName: dummyData.restaurant.Category.name,
-        image: dummyData.restaurant.image,
-        openingHours: dummyData.restaurant.opening_hours,
-        tel: dummyData.restaurant.tel,
-        address: dummyData.restaurant.address,
-        description: dummyData.restaurant.description,
-        isFavorited: dummyData.isFavorited,
-        isLiked: dummyData.isLiked
-      };
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
 
-      this.restaurantComments = dummyData.restaurant.Comments;
+        // STEP 4: 將取得的資料帶入 Vue 的 data
+        this.restaurant = {
+          id: data.restaurant.id,
+          name: data.restaurant.name,
+          categoryName: data.restaurant.Category.name,
+          image: data.restaurant.image,
+          openingHours: data.restaurant.opening_hours,
+          tel: data.restaurant.tel,
+          address: data.restaurant.address,
+          description: data.restaurant.description,
+          isFavorited: data.isFavorited,
+          isLiked: data.isLiked
+        };
+
+        this.restaurantComments = data.restaurant.Comments;
+      } catch (error) {
+        // STEP 5: 錯誤處理
+        Toast.fire({
+          type: "error",
+          title: "無法取得餐廳資料，請稍後再試"
+        });
+      }
     },
     afterDeleteComment(commentId) {
       // 以 filter 保留未被選擇的 comment.id
@@ -186,18 +99,36 @@ export default {
         comment => comment.id !== commentId
       );
     },
-    afterCreateComment(payload) {
-      const { commentId, restaurantId, text } = payload;
-      this.restaurantComments.push({
-        id: commentId,
-        RestaurantId: restaurantId,
-        User: {
+    async afterCreateComment(payload) {
+      try {
+        const { restaurantId, text } = payload;
+        const User = {
           id: this.currentUser.id,
           name: this.currentUser.name
-        },
-        text,
-        createdAt: new Date()
-      });
+        };
+        const { data, statusText } = await commentAPI.create({
+          User,
+          restaurantId,
+          text
+        });
+        if (statusText !== "OK" || data.status !== "success") {
+          throw new Error(statusText);
+        }
+        this.restaurantComments.push({
+          RestaurantId: restaurantId,
+          User: {
+            id: this.currentUser.id,
+            name: this.currentUser.name
+          },
+          text,
+          createdAt: new Date()
+        });
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "現在無法新增評論，請稍後再試"
+        });
+      }
     }
   }
 };
