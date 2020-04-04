@@ -57,7 +57,7 @@ const router = new Router({
     },
     {
       path: '/users/:id/edit',
-      name: 'useredit',
+      name: 'users-edit',
       component: () => import('./views/UserProfileEdit.vue')
     },
     {

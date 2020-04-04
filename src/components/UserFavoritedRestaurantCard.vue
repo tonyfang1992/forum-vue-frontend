@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <strong>{{profile.FavoritedRestaurants.length}}</strong> 收藏的餐廳
+      <strong>{{profile.FavoritedRestaurants?profile.FavoritedRestaurants.length:'No Data'}}</strong> 收藏的餐廳
     </div>
     <div class="card-body">
       <router-link
@@ -25,9 +25,22 @@ import { emptyImageFilter } from "./../utils/mixins";
 export default {
   mixins: [emptyImageFilter],
   props: {
-    profile: {
+    initialProfile: {
       type: Object,
-      required: true
+      require: true
+    }
+  },
+  data() {
+    return {
+      profile: this.initialProfile
+    };
+  },
+  watch: {
+    initialProfile(profile) {
+      this.profile = {
+        ...this.profile,
+        ...profile
+      };
     }
   }
 };

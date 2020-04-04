@@ -2,15 +2,20 @@
   <main role="main">
     <div class="album py-5 bg-light">
       <div class="container">
-        <UserProfileCard :profile="profile" />
+        <UserProfileCard
+          :profile="profile"
+          :initial-profile="profile"
+          :isFollowed="isFollowed"
+          :initial-is-followed="isFollowed"
+        />
         <div class="row">
           <div class="col-md-4">
-            <UserFollowingsCard :profile="profile" />
-            <UserFollowersCard :profile="profile" />
+            <UserFollowingsCard :profile="profile" :initial-profile="profile" />
+            <UserFollowersCard :profile="profile" :initial-profile="profile" />
           </div>
           <div class="col-md-8">
-            <UserCommentsCard :profile="profile" />
-            <UserFavoritedRestaurantCard :profile="profile" />
+            <UserCommentsCard :profile="profile" :initial-profile="profile" />
+            <UserFavoritedRestaurantCard :profile="profile" :initial-profile="profile" />
           </div>
         </div>
       </div>
@@ -26,17 +31,8 @@ import UserCommentsCard from "./../components/UserCommentsCard";
 import UserFavoritedRestaurantCard from "./../components/UserFavoritedRestaurantCard";
 import UserAPI from "../apis/user";
 import { Toast } from "../utils/helpers";
+import { mapState } from "vuex";
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true
-  },
-  isAuthenticated: true
-};
 export default {
   components: {
     UserProfileCard,
@@ -48,20 +44,32 @@ export default {
   data() {
     return {
       profile: {},
-      currentUser: dummyUser.currentUser
+      isFollowed: false
     };
   },
   created() {
     const { id } = this.$route.params;
     this.fetchUser(id);
   },
+  beforeRouteUpdate(to, from, next) {
+    // 路由改變時重新抓取資料
+    const { id } = to.params;
+    this.fetchUser(id);
+    next();
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"])
+  },
   methods: {
-    async fetchUser(userId) {
+    async fetchUser(id) {
       try {
-        const { data, statusText } = await UserAPI.get({ userId });
-        console.log(data);
-        console.log(statusText);
-        this.profile = data.profile;
+        const { data, statusText } = await UserAPI.get({ id });
+        const { profile, isFollowed } = data;
+        this.profile = profile;
+        this.isFollowed = isFollowed;
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
       } catch (error) {
         Toast.fire({
           icon: "error",

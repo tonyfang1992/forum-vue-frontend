@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <strong>{{profile.Followings.length}}</strong> followings (追蹤者)
+      <strong>{{profile.Followings?profile.Followings.length:'No Data'}}</strong> followings (追蹤者)
     </div>
     <div class="card-body">
       <router-link
@@ -20,9 +20,22 @@ import { emptyImageFilter } from "./../utils/mixins";
 export default {
   mixins: [emptyImageFilter],
   props: {
-    profile: {
+    initialProfile: {
       type: Object,
       require: true
+    }
+  },
+  data() {
+    return {
+      profile: this.initialProfile
+    };
+  },
+  watch: {
+    initialProfile(profile) {
+      this.profile = {
+        ...this.profile,
+        ...profile
+      };
     }
   }
 };
